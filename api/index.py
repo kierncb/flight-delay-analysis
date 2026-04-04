@@ -44,7 +44,7 @@ class FlightInput(BaseModel):
     actual_hour: int
     actual_min: int
 
-@app.get("/api/options") # Added /api prefix to match vercel.json logic
+@app.get("/options") # Added /api prefix to match vercel.json logic
 def get_options():
     return {
         "carriers": sorted(le_carrier.classes_.tolist()),
@@ -52,14 +52,14 @@ def get_options():
         "dests":    sorted(le_dest.classes_.tolist()),
     }
 
-@app.get("/api/dests")
+@app.get("/dests")
 def get_dests(origin: str):
     available = dist_df[dist_df["origin"] == origin]["dest"].unique().tolist()
     if not available:
         available = le_dest.classes_.tolist()
     return {"dests": sorted(available)}
 
-@app.post("/api/predict")
+@app.post("/predict")
 def predict(inp: FlightInput):
     dep_delay = (inp.actual_hour * 60 + inp.actual_min) - (inp.sched_hour * 60 + inp.sched_min)
     hour = inp.sched_hour
