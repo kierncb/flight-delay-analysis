@@ -420,6 +420,74 @@
   }
 
   @keyframes spin { to { transform: rotate(360deg); } }
+
+
+  @media (max-width: 600px) {
+  body { padding: 16px 10px 40px; }
+
+  .ticket { border-radius: 14px; }
+
+  .ticket-header {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .airline-name { font-size: 20px; }
+
+  .boarding-label { font-size: 11px; }
+  .boarding-label strong { font-size: 14px; }
+
+  /* Hide the stub on mobile — show info in footer instead */
+  .tear, .ticket-stub { display: none; }
+
+  .ticket-form { padding: 16px; gap: 12px; }
+
+  .field-value-large { font-size: 28px; }
+
+  .row { flex-direction: column; gap: 10px; }
+  .col { max-width: 100% !important; }
+
+  select, input[type="number"], input[type="time"] {
+    font-size: 16px; /* prevents iOS zoom on focus */
+    padding: 10px 12px;
+  }
+
+  select {
+    padding-right: 32px;
+    background-position: right 12px center;
+  }
+
+  .ticket-footer {
+    padding: 10px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .footer-info { text-align: left; font-size: 10px; }
+
+  .predict-btn {
+    font-size: 15px;
+    padding: 14px;
+    margin-top: 14px;
+  }
+
+  .result-body {
+    padding: 16px;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .prob-pct { font-size: 28px; min-width: 60px; }
+
+  .status-ring { width: 58px; height: 58px; }
+
+  .result-label { font-size: 20px; }
+
+  .result-footer { padding: 10px 16px; flex-direction: column; gap: 4px; }
+}
+
 </style>
 </head>
 <body>
