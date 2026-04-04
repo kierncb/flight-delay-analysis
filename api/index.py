@@ -4,6 +4,8 @@ import pandas as pd
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import numpy as np
+
 # You can remove these if you are letting vercel.json handle the static index.html
 # from fastapi.responses import FileResponse 
 
@@ -73,8 +75,11 @@ def predict(inp: FlightInput):
 
     X = pd.DataFrame([[inp.month, inp.day, hour, dep_delay, distance, c_enc, o_enc, d_enc]],
                       columns=feature_cols)
-    prob = float(model.predict_proba(X)[0][1])
-    return {"probability": prob, "delayed": prob > 0.5}
+    
+   # Replace model.predict_proba with:
+def lr_predict(coef, intercept, x):
+    logit = np.dot(coef, x) + intercept
+    return 1 / (1 + np.exp(-logit))  # sigmoid
 
 # NOTE: We removed the @app.get("/") route because your vercel.json 
 # handles serving /public/index.html automatically.
