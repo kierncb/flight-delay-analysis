@@ -245,9 +245,9 @@
 
   .barcode {
     display: flex;
-    gap: 2px;
+    gap: 0px;
     align-items: center;
-    height: 36px;
+    height: 40px;
   }
 
   .barcode span {
@@ -661,15 +661,16 @@ const API = '/api';
 function drawBarcode() {
   const bc = document.getElementById('barcode');
   bc.innerHTML = '';
-  const pattern = [2,1,3,1,2,1,1,2,3,1,2,2,1,3,1,2,1,2,2,1,3,1,1,2,2,3,1,2,1,1,2,3,1,2,2,1];
+  const pattern = [1,2,1,1,3,1,2,1,1,2,1,3,2,1,1,2,3,1,1,2,1,2,1,1,3,2,1,1,2,1,3,1,2,1,1,2,1,3,1,2,1,1,2,3,1,2,1,1,3,1,2,1];
   pattern.forEach((w, i) => {
     const s = document.createElement('span');
-    s.style.width  = w + 'px';
-    s.style.height = (18 + (i % 4) * 3) + 'px';
+    s.style.width = (w * 2) + 'px';
+    s.style.height = '40px'; // uniform height
+    s.style.background = i % 2 === 0 ? '#111' : 'transparent'; // alternating bars and gaps
+    s.style.display = 'inline-block';
     bc.appendChild(s);
   });
 }
-drawBarcode();
 
 // ── Populate dropdowns from API ────────────────────
 async function init() {
