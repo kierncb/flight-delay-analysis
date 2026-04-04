@@ -665,9 +665,11 @@ function drawBarcode() {
   pattern.forEach((w, i) => {
     const s = document.createElement('span');
     s.style.width = (w * 2) + 'px';
-    s.style.height = '40px'; // uniform height
-    s.style.background = i % 2 === 0 ? '#111' : 'transparent'; // alternating bars and gaps
+    s.style.height = '40px';
     s.style.display = 'inline-block';
+    if (i % 2 === 0) {
+      s.style.background = '#111';
+    }
     bc.appendChild(s);
   });
 }
