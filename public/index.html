@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Flight Delay Predictor</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --red: #2ea4e0;
+    --red-dark: #1e8bbf;
+    --accent: #652d90;
+    --cream: #f0ece4;
+    --white: #ffffff;
+    --gray-light: #f5f5f5;
+    --gray-mid: #e0e0e0;
+    --gray-text: #888;
+    --black: #111;
+  }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--cream);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 40px 16px 60px;
+    color: var(--black);
+  }
+
+  /* ── TICKET ─────────────────────────────────────── */
+  .ticket {
+    width: 100%;
+    max-width: 680px;
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.13);
+    overflow: visible;
+    position: relative;
+  }
+
+  /* ── HEADER ── */
+  .ticket-header {
+    background: var(--red);
+    border-radius: 20px 20px 0 0;
+    padding: 16px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .airline-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-circle {
+    width: 42px; height: 42px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .airline-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: 0.5px;
+  }
+
+  .boarding-label {
+    text-align: right;
+    font-family: 'Barlow Condensed', sans-serif;
+    color: rgba(255,255,255,0.85);
+    font-size: 12px;
+    letter-spacing: 2px;
+    line-height: 1.5;
+  }
+
+  .boarding-label strong {
+    display: block;
+    font-size: 17px;
+    color: #fff;
+    letter-spacing: 1.5px;
+  }
+
+  /* ── MAIN BODY: left form + tear + right stub ── */
+  .ticket-body {
+    display: flex;
+  }
+
+  .ticket-form {
+    flex: 1;
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* ── TEAR LINE ── */
+  .tear {
+    width: 28px;
+    flex-shrink: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tear::before {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--red) 0, var(--red) 6px,
+      transparent 6px, transparent 12px
+    );
+  }
+
+  .tear-notch {
+    width: 22px; height: 22px;
+    background: var(--cream);
+    border-radius: 50%;
+    border: 1px solid var(--gray-mid);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .tear-notch.top { margin-top: -11px; }
+  .tear-notch.bottom { margin-top: auto; margin-bottom: -11px; }
+
+  /* ── RIGHT STUB ── */
+  .ticket-stub {
+    width: 170px;
+    flex-shrink: 0;
+    background: #eaf5fc;
+    border-left: none;
+    padding: 24px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    border-radius: 0 0 0 0;
+  }
+
+  /* ── FORM ELEMENTS ── */
+  .field-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--gray-text);
+    margin-bottom: 5px;
+  }
+
+  .field-value-large {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 38px;
+    font-weight: 800;
+    color: var(--red);
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .stub-value {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--black);
+  }
+
+  .stub-value.big {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--red);
+  }
+
+  .row { display: flex; gap: 12px; }
+  .col { flex: 1; min-width: 0; }
+
+  .route-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  .route-arrow {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+
+  .route-arrow svg { width: 100%; }
+
+  select, input[type="number"], input[type="time"] {
+    width: 100%;
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    padding: 8px 10px;
+    border: 1px solid var(--gray-mid);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--black);
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+  }
+
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+
+  select:focus, input:focus { border-color: var(--red); }
+
+  .divider {
+    border: none;
+    border-top: 1px dashed var(--accent);
+    opacity: 0.45;
+    margin: 4px 0;
+  }
+
+  /* ── BARCODE FOOTER ── */
+  .ticket-footer {
+    border-top: 1px dashed #ccc;
+    background: #f9f9f9;
+    border-radius: 0 0 20px 20px;
+    padding: 12px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .barcode {
+    display: flex;
+    gap: 2px;
+    align-items: flex-end;
+    height: 32px;
+  }
+
+  .barcode span {
+    display: inline-block;
+    background: #222;
+    border-radius: 1px;
+  }
+
+  .footer-info {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--gray-text);
+    text-align: right;
+    line-height: 1.7;
+  }
+
+  /* ── PREDICT BUTTON ── */
+  .predict-btn {
+    width: 100%;
+    max-width: 680px;
+    margin-top: 20px;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--red) 0%, var(--accent) 100%);
+    color: #fff;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    box-shadow: 0 4px 16px rgba(46,164,224,0.28);
+  }
+
+  .predict-btn:hover { opacity: 0.9; }
+  .predict-btn:active { transform: scale(0.985); }
+  .predict-btn:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
+
+  /* ── RESULT CARD ── */
+  .result-card {
+    display: none;
+    width: 100%;
+    max-width: 680px;
+    margin-top: 16px;
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+    overflow: hidden;
+    animation: slideUp 0.4s ease;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-card.show { display: block; }
+
+  .result-header {
+    background: var(--red);
+    padding: 10px 24px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.9);
+    text-align: center;
+  }
+
+  .result-body {
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+  }
+
+  .status-ring {
+    width: 74px; height: 74px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    border-width: 2.5px;
+    border-style: solid;
+  }
+
+  .status-ring.ok   { background: #e8f5e9; border-color: #43a047; }
+  .status-ring.late { background: #fff0f0; border-color: #e53935; }
+
+  .result-text { flex: 1; }
+
+  .result-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .result-label.ok   { color: #2e7d32; }
+  .result-label.late { color: #c62828; }
+
+  .result-sub {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+  }
+
+  .prob-bar-track {
+    background: #ebebeb;
+    border-radius: 100px;
+    height: 9px;
+    overflow: hidden;
+  }
+
+  .prob-bar-fill {
+    height: 100%;
+    border-radius: 100px;
+    width: 0;
+    transition: width 1s cubic-bezier(.4,0,.2,1);
+  }
+
+  .prob-bar-fill.ok   { background: #43a047; }
+  .prob-bar-fill.late { background: #e53935; }
+
+  .prob-pct {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 36px;
+    min-width: 80px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .prob-pct.ok   { color: #2e7d32; }
+  .prob-pct.late { color: #c62828; }
+
+  .result-footer {
+    border-top: 1px dashed #ccc;
+    background: #f9f9f9;
+    padding: 10px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .result-footer-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #bbb;
+    font-family: 'Barlow Condensed', sans-serif;
+  }
+
+  .result-footer-detail {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--gray-text);
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 18px; height: 18px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════ TICKET ══ -->
+<div class="ticket">
+
+  <!-- Header -->
+  <div class="ticket-header">
+    <div class="airline-logo">
+      <div class="logo-circle">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
+          <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
+        </svg>
+      </div>
+      <span class="airline-name">Kierncb Airlines</span>
+    </div>
+    <div class="boarding-label">
+      Flight Delay Predictor
+      <strong>BOARDING PASS</strong>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="ticket-body">
+
+    <!-- LEFT: Form -->
+    <div class="ticket-form">
+
+      <!-- Route display -->
+      <div class="route-row">
+        <div>
+          <div class="field-label">From</div>
+          <div class="field-value-large" id="disp-origin">—</div>
+        </div>
+        <div class="route-arrow">
+          <svg viewBox="0 0 120 24" height="24" xmlns="http://www.w3.org/2000/svg">
+            <line x1="0" y1="12" x2="105" y2="12" stroke="#ddd" stroke-width="1.5"/>
+            <polygon points="105,7 118,12 105,17" fill="#ddd"/>
+            <circle cx="59" cy="12" r="4.5" fill="#2ea4e0" opacity="0.65"/>
+          </svg>
+        </div>
+        <div style="text-align:right">
+          <div class="field-label">To</div>
+          <div class="field-value-large" id="disp-dest">—</div>
+        </div>
+      </div>
+
+      <hr class="divider"/>
+
+      <!-- Origin / Dest -->
+      <div class="row">
+        <div class="col">
+          <div class="field-label">Origin Airport</div>
+          <select id="origin" onchange="onOriginChange()"></select>
+        </div>
+        <div class="col">
+          <div class="field-label">Destination</div>
+          <select id="dest" onchange="updateStub()"></select>
+        </div>
+      </div>
+
+      <!-- Carrier / Month -->
+      <div class="row">
+        <div class="col">
+          <div class="field-label">Carrier</div>
+          <select id="carrier" onchange="updateStub()"></select>
+        </div>
+        <div class="col">
+          <div class="field-label">Month</div>
+          <select id="month" onchange="updateStub()">
+            <option value="1">January</option><option value="2">February</option>
+            <option value="3">March</option><option value="4">April</option>
+            <option value="5">May</option><option value="6">June</option>
+            <option value="7" selected>July</option><option value="8">August</option>
+            <option value="9">September</option><option value="10">October</option>
+            <option value="11">November</option><option value="12">December</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Day / Sched / Actual -->
+      <div class="row">
+        <div class="col" style="max-width:110px">
+          <div class="field-label">Day</div>
+          <input type="number" id="day" min="1" max="31" value="15"/>
+        </div>
+        <div class="col">
+          <div class="field-label">Scheduled Dep.</div>
+          <input type="time" id="sched" value="17:00" onchange="updateStub()"/>
+        </div>
+        <div class="col">
+          <div class="field-label">Actual Dep.</div>
+          <input type="time" id="actual" value="17:00"/>
+        </div>
+      </div>
+
+    </div><!-- /ticket-form -->
+
+    <!-- TEAR LINE -->
+    <div class="tear">
+      <div class="tear-notch top"></div>
+      <div class="tear-notch bottom"></div>
+    </div>
+
+    <!-- RIGHT STUB -->
+    <div class="ticket-stub">
+      <div>
+        <div class="field-label">Passenger</div>
+        <div class="stub-value" style="font-size:13px;color:#555;">@kierncb</div>
+      </div>
+      <div>
+        <div class="field-label">From</div>
+        <div class="stub-value big" id="stub-origin">—</div>
+      </div>
+      <div>
+        <div class="field-label">To</div>
+        <div class="stub-value big" id="stub-dest">—</div>
+      </div>
+      <div>
+        <div class="field-label">Flight</div>
+        <div class="stub-value" id="stub-carrier">—</div>
+      </div>
+      <div>
+        <div class="field-label">Departs</div>
+        <div class="stub-value" id="stub-time">17:00</div>
+      </div>
+
+    </div>
+
+  </div><!-- /ticket-body -->
+
+  <!-- Barcode footer -->
+  <div class="ticket-footer">
+    <div class="barcode" id="barcode"></div>
+    <div class="footer-info" id="footer-info">— → — &nbsp;|&nbsp; — &nbsp;|&nbsp; 17:00</div>
+  </div>
+
+</div><!-- /ticket -->
+
+<!-- PREDICT BUTTON -->
+<button class="predict-btn" id="pred-btn" onclick="predict()">✈ &nbsp;Check Delay Risk</button>
+
+<!-- RESULT CARD -->
+<div class="result-card" id="result-card">
+  <div class="result-header">Prediction Result — Delay Analysis</div>
+  <div class="result-body">
+    <div class="status-ring" id="res-ring">
+      <svg width="34" height="34" viewBox="0 0 24 24" id="res-icon"></svg>
+    </div>
+    <div class="result-text">
+      <div class="result-label" id="res-label">—</div>
+      <div class="result-sub" id="res-sub">—</div>
+      <div class="prob-bar-track">
+        <div class="prob-bar-fill" id="res-bar"></div>
+      </div>
+    </div>
+    <div class="prob-pct" id="res-pct">—</div>
+  </div>
+  <div class="result-footer">
+    <span class="result-footer-label">Delay Probability</span>
+    <span class="result-footer-detail" id="res-detail">—</span>
+  </div>
+</div>
+
+<script>
+const API = '/api';
+
+// ── Barcode generator ──────────────────────────────
+function drawBarcode() {
+  const bc = document.getElementById('barcode');
+  bc.innerHTML = '';
+  const pattern = [2,1,3,1,2,1,1,2,3,1,2,2,1,3,1,2,1,2,2,1,3,1,1,2,2,3,1,2,1,1,2,3,1,2,2,1];
+  pattern.forEach((w, i) => {
+    const s = document.createElement('span');
+    s.style.width  = w + 'px';
+    s.style.height = (18 + (i % 4) * 3) + 'px';
+    bc.appendChild(s);
+  });
+}
+drawBarcode();
+
+// ── Populate dropdowns from API ────────────────────
+async function init() {
+  try {
+    const r = await fetch(API + '/options');
+    const d = await r.json();
+
+    const originSel = document.getElementById('origin');
+    d.origins.forEach(o => {
+      const opt = document.createElement('option');
+      opt.value = opt.textContent = o;
+      if (o === 'JFK') opt.selected = true;
+      originSel.appendChild(opt);
+    });
+
+    const carrierSel = document.getElementById('carrier');
+    d.carriers.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = opt.textContent = c;
+      carrierSel.appendChild(opt);
+    });
+
+    await onOriginChange();
+  } catch (e) {
+    // Fallback demo data if API not running
+    populateFallback();
+  }
+}
+
+function populateFallback() {
+  const airports = ['ATL','BOS','DEN','DFW','IAH','JFK','LAX','MIA','ORD','SEA','SFO'];
+  const carriers = ['AA','AS','B6','DL','F9','NK','UA','WN'];
+
+  const os = document.getElementById('origin');
+  const cs = document.getElementById('carrier');
+  airports.forEach(a => {
+    const o = document.createElement('option');
+    o.value = o.textContent = a;
+    if (a === 'JFK') o.selected = true;
+    os.appendChild(o);
+  });
+  carriers.forEach(c => {
+    const o = document.createElement('option');
+    o.value = o.textContent = c;
+    cs.appendChild(o);
+  });
+
+  const ds = document.getElementById('dest');
+  airports.forEach(a => {
+    const o = document.createElement('option');
+    o.value = o.textContent = a;
+    if (a === 'LAX') o.selected = true;
+    ds.appendChild(o);
+  });
+
+  updateStub();
+}
+
+async function onOriginChange() {
+  const origin = document.getElementById('origin').value;
+  try {
+    const r = await fetch(API + '/dests?origin=' + origin);
+    const d = await r.json();
+    const destSel = document.getElementById('dest');
+    destSel.innerHTML = '';
+    d.dests.forEach((dest, i) => {
+      const opt = document.createElement('option');
+      opt.value = opt.textContent = dest;
+      if (i === 0) opt.selected = true;
+      destSel.appendChild(opt);
+    });
+  } catch(e) {}
+  updateStub();
+}
+
+function updateStub() {
+  const origin  = document.getElementById('origin').value  || '—';
+  const dest    = document.getElementById('dest').value    || '—';
+  const carrier = document.getElementById('carrier').value || '—';
+  const sched   = document.getElementById('sched').value   || '00:00';
+
+  document.getElementById('disp-origin').textContent   = origin;
+  document.getElementById('disp-dest').textContent     = dest;
+  document.getElementById('stub-origin').textContent   = origin;
+  document.getElementById('stub-dest').textContent     = dest;
+  document.getElementById('stub-carrier').textContent  = carrier;
+  document.getElementById('stub-time').textContent     = sched;
+  document.getElementById('footer-info').textContent   = origin + ' → ' + dest + '   |   ' + carrier + '   |   ' + sched;
+}
+
+// ── Prediction ─────────────────────────────────────
+async function predict() {
+  const btn = document.getElementById('pred-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Checking…';
+
+  const origin  = document.getElementById('origin').value;
+  const dest    = document.getElementById('dest').value;
+  const carrier = document.getElementById('carrier').value;
+  const month   = parseInt(document.getElementById('month').value);
+  const day     = parseInt(document.getElementById('day').value);
+  const sched   = document.getElementById('sched').value.split(':').map(Number);
+  const actual  = document.getElementById('actual').value.split(':').map(Number);
+
+  let prob;
+  try {
+    const r = await fetch(API + '/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        origin, dest, carrier, month, day,
+        sched_hour: sched[0], sched_min: sched[1],
+        actual_hour: actual[0], actual_min: actual[1]
+      })
+    });
+    const d = await r.json();
+    prob = d.probability;
+  } catch(e) {
+    // Heuristic fallback
+    const depDelay = (actual[0]*60+actual[1]) - (sched[0]*60+sched[1]);
+    prob = 0.18;
+    if (depDelay > 30) prob += 0.35;
+    else if (depDelay > 15) prob += 0.22;
+    else if (depDelay > 0)  prob += 0.10;
+    else if (depDelay < 0)  prob -= 0.05;
+    if (month >= 6 && month <= 8) prob += 0.08;
+    if (month === 12) prob += 0.12;
+    if (sched[0] >= 15 && sched[0] <= 20) prob += 0.10;
+    prob = Math.min(0.97, Math.max(0.03, prob));
+  }
+
+  showResult(prob, origin, dest,
+    (actual[0]*60+actual[1]) - (sched[0]*60+sched[1]));
+
+  btn.disabled = false;
+  btn.innerHTML = '✈ &nbsp;Check Delay Risk';
+}
+
+function showResult(prob, origin, dest, depDelayMin) {
+  const delayed = prob > 0.5;
+  const pct     = Math.round(prob * 100);
+  const cls     = delayed ? 'late' : 'ok';
+
+  const ring  = document.getElementById('res-ring');
+  const icon  = document.getElementById('res-icon');
+  const label = document.getElementById('res-label');
+  const sub   = document.getElementById('res-sub');
+  const bar   = document.getElementById('res-bar');
+  const pctEl = document.getElementById('res-pct');
+  const det   = document.getElementById('res-detail');
+
+  ring.className  = 'status-ring ' + cls;
+  label.className = 'result-label ' + cls;
+  pctEl.className = 'prob-pct ' + cls;
+  bar.className   = 'prob-bar-fill ' + cls;
+
+  if (delayed) {
+    label.textContent = 'DELAYED';
+    sub.textContent   = 'High probability of arrival delay exceeding 15 minutes.';
+    icon.innerHTML    = '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="#e53935"/>';
+  } else {
+    label.textContent = 'ON-TIME';
+    sub.textContent   = 'Low probability of arrival delay exceeding 15 minutes.';
+    icon.innerHTML    = '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" fill="#43a047"/>';
+  }
+
+  const depStr = depDelayMin > 0 ? '+' + depDelayMin + ' min late'
+               : depDelayMin < 0 ? Math.abs(depDelayMin) + ' min early'
+               : 'on time';
+  det.textContent   = origin + '→' + dest + '   |   Dep. ' + depStr + '   |   Risk: ' + pct + '%';
+  pctEl.textContent = pct + '%';
+
+  const card = document.getElementById('result-card');
+  card.classList.add('show');
+
+  // Animate bar after paint
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => { bar.style.width = pct + '%'; });
+  });
+
+  card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+init();
+</script>
+</body>
+</html>
