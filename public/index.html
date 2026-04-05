@@ -794,7 +794,11 @@ function updateStub() {
   document.getElementById('stub-dest').textContent     = dest;
   document.getElementById('stub-carrier').textContent  = carrier;
   document.getElementById('stub-time').textContent     = sched;
-  document.getElementById('footer-info').textContent   = origin + ' → ' + dest + '   |   ' + carrier + '   |   ' + sched;
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const monthVal = parseInt(document.getElementById('month').value);
+  const dayVal   = document.getElementById('day').value;
+  const dateStr  = monthNames[monthVal - 1] + ' ' + dayVal;
+  document.getElementById('footer-info').textContent   = origin + ' → ' + dest + '   |   ' + carrier + '   |   ' + sched + '   |   ' + dateStr;
 }
 
 // ── Prediction ─────────────────────────────────────
