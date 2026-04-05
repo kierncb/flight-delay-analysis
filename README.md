@@ -155,6 +155,8 @@ I cleaned the dataset by first removing rows with missing values using `df.dropn
 
 ![alt text](<images/Common Airport Destinations with 15 min Departure Delay Across All Airport Origins.png>)
 
+See source code here: [flight_delay_analysis](analysis/Flight_Delay_Analysis.ipynb)
+
 ## VII. Prediction Model
 
 A Logistic Regression model was built to predict whether a flight will arrive more than 15 minutes late (`arr_delay > 15`).
