@@ -657,25 +657,59 @@
 <script>
 const API = '/api';
 
-// ── Barcode generator ──────────────────────────────
+// ── Barcode generator (crisp SVG EAN-13 style) ────────────────────
 function drawBarcode() {
   const bc = document.getElementById('barcode');
   bc.innerHTML = '';
-  const pattern = [1,2,1,1,3,1,2,1,1,2,1,3,2,1,1,2,3,1,1,2,1,2,1,1,3,2,1,1,2,1,3,1,2,1,1,2,1,3,1,2,1,1,2,3,1,2,1,1,3,1,2,1];
-  pattern.forEach((w, i) => {
-    const s = document.createElement('span');
-    s.style.width = (w * 2) + 'px';
-    s.style.height = '40px';
-    s.style.display = 'inline-block';
-    if (i % 2 === 0) {
-      s.style.background = '#111';
+
+  // EAN-13 encoding tables
+  const L = ['0001101','0011001','0010011','0111101','0100011','0110001','0101111','0111011','0110111','0001011'];
+  const G = ['0100111','0110011','0011011','0100001','0011101','0111001','0000101','0010001','0001001','0010111'];
+  const R = ['1110010','1100110','1101100','1000010','1011100','1001110','1010000','1000100','1001000','1110100'];
+  const firstDigitParity = ['LLLLLL','LLGLGG','LLGGLG','LLGGGL','LGLLGG','LGGLLG','LGGGLL','LGLGLG','LGLGGL','LGGLGL'];
+
+  const digits = '5674577163452'.split('').map(Number);
+  const parityPattern = firstDigitParity[digits[0]];
+
+  // Build full bit string
+  let bits = '101'; // start guard
+  for (let i = 1; i <= 6; i++) {
+    const table = parityPattern[i - 1] === 'L' ? L : G;
+    bits += table[digits[i]];
+  }
+  bits += '01010'; // middle guard
+  for (let i = 7; i <= 12; i++) {
+    bits += R[digits[i]];
+  }
+  bits += '101'; // end guard
+
+  const barW = 2;
+  const barH = 44;
+  const numH = 14;
+  const totalW = bits.length * barW;
+  const totalH = barH + numH;
+
+  let svgBars = '';
+  for (let i = 0; i < bits.length; i++) {
+    if (bits[i] === '1') {
+      svgBars += `<rect x="${i * barW}" y="0" width="${barW}" height="${barH}" fill="#111"/>`;
     }
-    bc.appendChild(s);
-  });
+  }
+
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}">
+      <rect width="${totalW}" height="${totalH}" fill="white"/>
+      ${svgBars}
+      <text x="${totalW / 2}" y="${totalH - 1}" text-anchor="middle"
+        font-family="'Share Tech Mono', monospace" font-size="10" fill="#111">5674577163452</text>
+    </svg>`;
+
+  bc.innerHTML = svg;
 }
 
 // ── Populate dropdowns from API ────────────────────
 async function init() {
+  drawBarcode();
   try {
     const r = await fetch(API + '/options');
     const d = await r.json();
