@@ -18,40 +18,16 @@
     --gray-mid: #e0e0e0;
     --gray-text: #888;
     --black: #111;
-    --stub-bg: #eaf5fc;
-    --footer-bg: #f9f9f9;
-    --barcode-fill: #111;
-    --input-bg: #ffffff;
-    --result-ok-bg: #e8f5e9;
-    --result-late-bg: #fff0f0;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --cream: #0f1117;
-      --white: #1c1f26;
-      --gray-light: #1e2128;
-      --gray-mid: #2e3340;
-      --gray-text: #999;
-      --black: #e8e8e8;
-      --stub-bg: #161b25;
-      --footer-bg: #161a22;
-      --barcode-fill: #e8e8e8;
-      --input-bg: #1e2230;
-      --result-ok-bg: #0d2b10;
-      --result-late-bg: #2b0d0d;
-    }
   }
 
   body {
     font-family: 'Barlow', sans-serif;
     background: var(--cream);
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: 40px 16px 60px;
+    padding: 16px 16px 20px;
     color: var(--black);
   }
 
@@ -167,7 +143,7 @@
   .ticket-stub {
     width: 170px;
     flex-shrink: 0;
-    background: var(--stub-bg);
+    background: #eaf5fc;
     border-left: none;
     padding: 24px 18px;
     display: flex;
@@ -234,7 +210,7 @@
     padding: 8px 10px;
     border: 1px solid var(--gray-mid);
     border-radius: 8px;
-    background: var(--input-bg);
+    background: var(--white);
     color: var(--black);
     outline: none;
     transition: border-color 0.2s;
@@ -257,7 +233,7 @@
   /* ── BARCODE FOOTER ── */
   .ticket-footer {
     border-top: 1px dashed #ccc;
-    background: var(--footer-bg);
+    background: #f9f9f9;
     border-radius: 0 0 20px 20px;
     padding: 12px 28px;
     display: flex;
@@ -292,7 +268,7 @@
   .predict-btn {
     width: 100%;
     max-width: 680px;
-    margin-top: 20px;
+    margin-top: 12px;
     padding: 15px;
     background: linear-gradient(135deg, var(--red) 0%, var(--accent) 100%);
     color: #fff;
@@ -359,8 +335,8 @@
     border-style: solid;
   }
 
-  .status-ring.ok   { background: var(--result-ok-bg); border-color: #43a047; }
-  .status-ring.late { background: var(--result-late-bg); border-color: #e53935; }
+  .status-ring.ok   { background: #e8f5e9; border-color: #43a047; }
+  .status-ring.late { background: #fff0f0; border-color: #e53935; }
 
   .result-text { flex: 1; }
 
@@ -411,7 +387,7 @@
 
   .result-footer {
     border-top: 1px dashed #ccc;
-    background: var(--footer-bg);
+    background: #f9f9f9;
     padding: 10px 28px;
     display: flex;
     justify-content: space-between;
@@ -680,59 +656,25 @@
 <script>
 const API = '/api';
 
-// ── Barcode generator (crisp SVG EAN-13 style) ────────────────────
+// ── Barcode generator ──────────────────────────────
 function drawBarcode() {
   const bc = document.getElementById('barcode');
   bc.innerHTML = '';
-
-  // EAN-13 encoding tables
-  const L = ['0001101','0011001','0010011','0111101','0100011','0110001','0101111','0111011','0110111','0001011'];
-  const G = ['0100111','0110011','0011011','0100001','0011101','0111001','0000101','0010001','0001001','0010111'];
-  const R = ['1110010','1100110','1101100','1000010','1011100','1001110','1010000','1000100','1001000','1110100'];
-  const firstDigitParity = ['LLLLLL','LLGLGG','LLGGLG','LLGGGL','LGLLGG','LGGLLG','LGGGLL','LGLGLG','LGLGGL','LGGLGL'];
-
-  const digits = '5674577163452'.split('').map(Number);
-  const parityPattern = firstDigitParity[digits[0]];
-
-  // Build full bit string
-  let bits = '101'; // start guard
-  for (let i = 1; i <= 6; i++) {
-    const table = parityPattern[i - 1] === 'L' ? L : G;
-    bits += table[digits[i]];
-  }
-  bits += '01010'; // middle guard
-  for (let i = 7; i <= 12; i++) {
-    bits += R[digits[i]];
-  }
-  bits += '101'; // end guard
-
-  const barW = 2;
-  const barH = 44;
-  const numH = 14;
-  const totalW = bits.length * barW;
-  const totalH = barH + numH;
-
-  let svgBars = '';
-  for (let i = 0; i < bits.length; i++) {
-    if (bits[i] === '1') {
-      svgBars += `<rect x="${i * barW}" y="0" width="${barW}" height="${barH}" fill="currentColor"/>`;
+  const pattern = [1,2,1,1,3,1,2,1,1,2,1,3,2,1,1,2,3,1,1,2,1,2,1,1,3,2,1,1,2,1,3,1,2,1,1,2,1,3,1,2,1,1,2,3,1,2,1,1,3,1,2,1];
+  pattern.forEach((w, i) => {
+    const s = document.createElement('span');
+    s.style.width = (w * 2) + 'px';
+    s.style.height = '40px';
+    s.style.display = 'inline-block';
+    if (i % 2 === 0) {
+      s.style.background = '#111';
     }
-  }
-
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}">
-      <rect width="${totalW}" height="${totalH}" fill="var(--footer-bg)"/>
-      ${svgBars}
-      <text x="${totalW / 2}" y="${totalH - 1}" text-anchor="middle"
-        font-family="'Share Tech Mono', monospace" font-size="10" fill="currentColor">5674577163452</text>
-    </svg>`;
-
-  bc.innerHTML = svg;
+    bc.appendChild(s);
+  });
 }
 
 // ── Populate dropdowns from API ────────────────────
 async function init() {
-  drawBarcode();
   try {
     const r = await fetch(API + '/options');
     const d = await r.json();
@@ -817,11 +759,7 @@ function updateStub() {
   document.getElementById('stub-dest').textContent     = dest;
   document.getElementById('stub-carrier').textContent  = carrier;
   document.getElementById('stub-time').textContent     = sched;
-  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const monthVal = parseInt(document.getElementById('month').value);
-  const dayVal   = document.getElementById('day').value;
-  const dateStr  = monthNames[monthVal - 1] + ' ' + dayVal;
-  document.getElementById('footer-info').textContent   = origin + ' → ' + dest + '   |   ' + carrier + '   |   ' + sched + '   |   ' + dateStr;
+  document.getElementById('footer-info').textContent   = origin + ' → ' + dest + '   |   ' + carrier + '   |   ' + sched;
 }
 
 // ── Prediction ─────────────────────────────────────
