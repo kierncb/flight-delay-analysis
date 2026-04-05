@@ -22,11 +22,11 @@ model_path = os.path.join(BASE_DIR, "flight_model.pkl")
 with open(model_path, "rb") as f:
     data = pickle.load(f)
 
-# ✅ Logistic Regression params (NOT sklearn model anymore)
+# Logistic Regression params
 coef = np.array(data["coef"])
 intercept = data["intercept"]
 
-# classes for encoding (if still needed)
+# classes for encoding
 carrier_classes = data["carrier_classes"]
 origin_classes  = data["origin_classes"]
 dest_classes    = data["dest_classes"]
