@@ -191,6 +191,7 @@ See prediction models here: [model_training](analysis/flight_delay_prediction.ip
 ## VIII. Tableau Dashboard
 ![db_page_1](images/db_page_1.png)
 ![db_page_2](images/db_page_2.png)
+![db_page_3](images/db_page_3.png)
 
 See Tableau dashboard [here](https://public.tableau.com/views/Try_17529228321370/Page_1?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link).
 
