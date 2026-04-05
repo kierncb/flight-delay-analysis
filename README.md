@@ -1,4 +1,4 @@
-# Flight Delay Analysis: Uncovering Delay Trends and Pattern
+# Flight Delay Analysis: Uncovering and Predicting Delay Trends and Pattern
 
 ### Table of Contents
 
@@ -8,8 +8,9 @@
 - [Data Description](#iv-data-description)
 - [Data Quality Check and Cleaning](#v-data-quality-check-and-cleaning)
 - [Insight Deep-dive](#vi-insight-deep-dive)
-- [Tableau Dashboard](#vii-tableau-dashboard)
-- [Recommendations](#vii-recommendations)
+- [Prediction Model](#vii-prediction-model)
+- [Tableau Dashboard](#viii-tableau-dashboard)
+- [Recommendations](#ix-recommendations)
 
 ## I. Executive Summary
 
@@ -79,7 +80,7 @@ I cleaned the dataset by first removing rows with missing values using `df.dropn
 - There are some extreme outliers with very high delays. These may represent exceptional cases, like weather disruptions or technical issues.
 - Flight distance shows no significant correlation with delays; both short-haul and long-haul flights follow a similar pattern—arrival delays increase with departure delays, and early departures often lead to early arrivals.
 
-![alt text](<Data_Vizualization/Relationship Between Departure and Arrival Delays Based on Flight Distance.png>)
+![alt text](<images/Relationship Between Departure and Arrival Delays Based on Flight Distance.png>)
 
 ### Impact of Traffic Volume on Departure and Arrival Delays by Airline
 
@@ -90,7 +91,7 @@ I cleaned the dataset by first removing rows with missing values using `df.dropn
 - Endeavor Air (5.28%) and Southwest Airlines (3.68%) have medium flight volumes, with delays ranging from 16 to 17 minutes, suggesting moderate operational strain or capacity issues.
 - US Airways (6.06%), Envoy Air (7.65%), and American Airlines (9.76%) maintain medium flight volumes but manage to keep delays under 15 minutes, demonstrating good scheduling and timely operations despite the moderate number of flights.
 
-![alt text](<Data_Vizualization/Impact of Traffic Volume on Departure and Arrival Delays by Airline.png>)
+![alt text](<images/Impact of Traffic Volume on Departure and Arrival Delays by Airline.png>)
 
 ### Monthly Average of Departure and Arrival Delays
 
@@ -99,7 +100,7 @@ I cleaned the dataset by first removing rows with missing values using `df.dropn
 - **August to November**: As delays decreased (from 12 minutes to 5 minutes for departures), it likely indicates a reduction in flight volumes or improved operations, allowing for better management of delays.
 - **December**: The rise in delays (15-16 minutes for departures) suggests a potential increase in flight volumes or operational strain as the year ended, leading to higher delays.
 
-![alt text](<Data_Vizualization/Monthly Average of Departure and Arrival Delays.png>)
+![alt text](<images/Monthly Average of Departure and Arrival Delays.png>)
 
 ### Hourly Average of Departure and Arrival Delays
 
@@ -107,7 +108,7 @@ I cleaned the dataset by first removing rows with missing values using `df.dropn
 - **15:00 to 21:00**: Delays increase to 16 to 24 minutes, with the peak at 19:00 to 21:00 showing consistent 24-minute delays. This period likely experiences higher traffic volumes, contributing to longer delays. The congestion during peak hours may lead to operational strain and inefficiencies.
 - **22:00 to 23:00**: Delays decrease from 18 minutes to 14 minutes, indicating an improvement likely due to reduced traffic volumes and fewer operational pressures. This suggests better handling of delays as the evening progresses and the number of flights decreases.
 
-![alt text](<Data_Vizualization/Hourly Average of Departure and Arrival Delays.png>)
+![alt text](<images/Impact of Flight Volume on Departure and Arrival Delays by Origin.png>)
 
 ### Impact of Flight Volume on Departure and Arrival Delays by Origin
 
@@ -118,7 +119,7 @@ I cleaned the dataset by first removing rows with missing values using `df.dropn
 - JFK has a significant volume of flights but operates more efficiently than EWR, with relatively shorter delays in both departure and arrival.
 - With the least flight volume, LGA handles its operations more smoothly, resulting in the shortest delays overall. This could indicate well-managed operations with a focus on efficiency.
 
-![alt text](<Data_Vizualization/Impact of Flight Volume on Departure and Arrival Delays by Origin.png>)
+![alt text](<images/Impact of Flight Volume on Departure and Arrival Delays by Origin.png>)
 
 ### Average Departure Delay for Each Origin Airport
 
@@ -128,7 +129,7 @@ I cleaned the dataset by first removing rows with missing values using `df.dropn
     - It also has the widest delay range: 15m 8s to 41m 39s, suggesting not only frequent but also longer delays.
     - EWR may be facing operational inefficiencies, congestion, or weather-related issues that significantly affect downstream schedules.
 
-    ![alt text](<Data_Vizualization/Average Departure Delay for EWR.png>)
+    ![alt text](<images/Average Departure Delay for EWR.png>)
 
 -  **LGA shows moderate performance**
 
@@ -136,7 +137,7 @@ I cleaned the dataset by first removing rows with missing values using `df.dropn
     - Delay range: 15m 11s – 31m 20s, suggesting delays are present but not as extreme as EWR.
     - LGA performs better than EWR but still has room for improvement in controlling moderate delays.
 
-    ![alt text](<Data_Vizualization/Average Departure Delay for LGA.png>)
+    ![alt text](<images/Average Departure Delay for LGA.png>)
 
 - **JFK has the best overall performance**
 
@@ -144,7 +145,7 @@ I cleaned the dataset by first removing rows with missing values using `df.dropn
     - Delay range: 15m 12s – 27m 20s, indicating shorter and more consistent delays.
     - JFK demonstrates relatively efficient operations and better schedule adherence compared to the other two.
 
-    ![alt text](<Data_Vizualization/Average Departure Delay for JFK.png>)
+    ![alt text](<images/Average Departure Delay for JFK.png>)
 
 ### Common Airport Destinations with >15 min Departure Delay Across All Airport Origins
 
@@ -152,14 +153,48 @@ I cleaned the dataset by first removing rows with missing values using `df.dropn
 - RIC stands out with the highest departure delay (23m 37s) and arrival delay (20m 7s), hinting at persistent operational or airspace inefficiencies.
 - While MKE, IAD, and ORF have slightly shorter delays, their repeated presence signals underlying systemic issues, possibly from constrained capacity or coordination gaps on the receiving end.
 
-![alt text](<Data_Vizualization/Common Airport Destinations with 15 min Departure Delay Across All Airport Origins.png>)
+![alt text](<images/Common Airport Destinations with 15 min Departure Delay Across All Airport Origins.png>)
 
-## VII. Tableau Dashboard
-![alt text](<Flight Delay Tableau Dashboard.png>)
+## VII. Prediction Model
 
-See Tableau dashboard [here](https://public.tableau.com/app/profile/kierncb/viz/Try_17529228321370/Dashboard2).
+A Logistic Regression model was built to predict whether a flight will arrive more than 15 minutes late (`arr_delay > 15`).
 
-## VIII. Recommendations
+**Features used:** `month`, `day`, `hour`, `dep_delay`, `distance`, `carrier`, `origin`, `dest`
+
+**Process:**
+- Target variable `is_delayed` was encoded as binary (1 = delayed, 0 = on-time)
+- Categorical features were label-encoded
+- Data split 80/20 (train/test, stratified)
+- Model evaluated using ROC-AUC, confusion matrix, and classification report
+
+**Results:**
+
+| Metric           | Score  |
+|------------------|--------|
+| ROC-AUC          | 0.9015 |
+| Overall Accuracy | 90%    |
+| Delayed Precision| 88%    |
+| Delayed Recall   | 67%    |
+| Delayed F1-Score | 0.76   |
+
+**Key finding:** The model performs strongly at identifying on-time flights (F1 = 0.94) but is 
+more conservative with delayed flights (F1 = 0.76), meaning some delays go undetected. 
+Departure delay was the strongest predictor of arrival delay.
+
+**Output:** The trained model was exported as `flight_model.pkl` and supports single-flight 
+predictions via `predict_flight()`, returning a delay probability and On-time/Delayed label.
+
+See prediction models here: [model_training](analysis/flight_delay_prediction.ipynb),  [model_trained](analysis/flight_model.pkl)
+
+![alt text](analysis/model_results.png)
+
+## VIII. Tableau Dashboard
+![db_page_1](images/db_page_1.png)
+![db_page_2](images/db_page_2.png)
+
+See Tableau dashboard [here](https://public.tableau.com/views/Try_17529228321370/Page_1?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link).
+
+## IX. Recommendations
 
 - **Improve Operations at EWR**
     - To address EWR’s significant delays—15 minutes for departures and 9 minutes for arrivals—airport management and operations teams should focus on reducing congestion and better handling weather disruptions. With the airport handling over a third of the total flight volume, these delays compound quickly. Strategies include adjusting flight schedules to reduce peak-hour pressure, improving air traffic coordination, strengthening communication with airlines, and enhancing weather-related response protocols.
