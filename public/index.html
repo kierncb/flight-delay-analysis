@@ -634,7 +634,7 @@
 
 <!-- RESULT CARD -->
 <div class="result-card" id="result-card">
-  <div class="result-header">Prediction Result — Delay Analysis</div>
+  <div class="result-header">Prediction Result</div>
   <div class="result-body">
     <div class="status-ring" id="res-ring">
       <svg width="34" height="34" viewBox="0 0 24 24" id="res-icon"></svg>
@@ -846,7 +846,7 @@ async function predict() {
     (actual[0]*60+actual[1]) - (sched[0]*60+sched[1]));
 
   btn.disabled = false;
-  btn.innerHTML = '✈ &nbsp;Check Delay Risk';
+  btn.innerHTML = 'Check Delay Risk';
 }
 
 function showResult(prob, origin, dest, depDelayMin) {
