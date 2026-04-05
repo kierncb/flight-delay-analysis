@@ -12,7 +12,7 @@
     --red: #2ea4e0;
     --red-dark: #1e8bbf;
     --accent: #652d90;
-    --cream: #f0ece4;
+    --cream: #f5f5f5;
     --white: #ffffff;
     --gray-light: #f5f5f5;
     --gray-mid: #e0e0e0;
@@ -20,48 +20,42 @@
     --black: #111;
     --stub-bg: #eaf5fc;
     --footer-bg: #f9f9f9;
-    --barcode-fill: #111;
     --input-bg: #ffffff;
     --result-ok-bg: #e8f5e9;
     --result-late-bg: #fff0f0;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --cream: #0f1117;
-      --white: #1c1f26;
-      --gray-light: #1e2128;
-      --gray-mid: #2e3340;
-      --gray-text: #999;
-      --black: #e8e8e8;
-      --stub-bg: #161b25;
-      --footer-bg: #161a22;
-      --barcode-fill: #e8e8e8;
-      --input-bg: #1e2230;
-      --result-ok-bg: #0d2b10;
-      --result-late-bg: #2b0d0d;
-    }
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
   }
 
   body {
     font-family: 'Barlow', sans-serif;
-    background: var(--cream);
-    min-height: 100vh;
+    background: #f5f5f5 !important;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
-    padding: 40px 16px 60px;
+    justify-content: center;
+    padding: 16px;
     color: var(--black);
+  }
+
+  .wrapper {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
 
   /* ── TICKET ─────────────────────────────────────── */
   .ticket {
     width: 100%;
-    max-width: 680px;
-    background: var(--white);
-    border-radius: 20px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.13);
+    background: #ffffff !important;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.10);
     overflow: visible;
     position: relative;
   }
@@ -69,8 +63,8 @@
   /* ── HEADER ── */
   .ticket-header {
     background: var(--red);
-    border-radius: 20px 20px 0 0;
-    padding: 16px 28px;
+    border-radius: 16px 16px 0 0;
+    padding: 13px 22px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -79,11 +73,11 @@
   .airline-logo {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
   }
 
   .logo-circle {
-    width: 42px; height: 42px;
+    width: 36px; height: 36px;
     background: rgba(255,255,255,0.18);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
@@ -91,7 +85,7 @@
 
   .airline-name {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 700;
     color: #fff;
     letter-spacing: 0.5px;
@@ -101,39 +95,41 @@
     text-align: right;
     font-family: 'Barlow Condensed', sans-serif;
     color: rgba(255,255,255,0.85);
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: 2px;
     line-height: 1.5;
   }
 
   .boarding-label strong {
     display: block;
-    font-size: 17px;
+    font-size: 15px;
     color: #fff;
     letter-spacing: 1.5px;
   }
 
-  /* ── MAIN BODY: left form + tear + right stub ── */
+  /* ── MAIN BODY ── */
   .ticket-body {
     display: flex;
   }
 
   .ticket-form {
     flex: 1;
-    padding: 24px 28px;
+    padding: 16px 22px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 11px;
+    background: #ffffff !important;
   }
 
   /* ── TEAR LINE ── */
   .tear {
-    width: 28px;
+    width: 24px;
     flex-shrink: 0;
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
+    background: #ffffff;
   }
 
   .tear::before {
@@ -151,8 +147,8 @@
   }
 
   .tear-notch {
-    width: 22px; height: 22px;
-    background: var(--cream);
+    width: 20px; height: 20px;
+    background: #f5f5f5;
     border-radius: 50%;
     border: 1px solid var(--gray-mid);
     flex-shrink: 0;
@@ -160,35 +156,34 @@
     z-index: 1;
   }
 
-  .tear-notch.top { margin-top: -11px; }
-  .tear-notch.bottom { margin-top: auto; margin-bottom: -11px; }
+  .tear-notch.top { margin-top: -10px; }
+  .tear-notch.bottom { margin-top: auto; margin-bottom: -10px; }
 
   /* ── RIGHT STUB ── */
   .ticket-stub {
-    width: 170px;
+    width: 150px;
     flex-shrink: 0;
     background: var(--stub-bg);
-    border-left: none;
-    padding: 24px 18px;
+    padding: 16px 14px;
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    border-radius: 0 0 0 0;
+    gap: 10px;
+    border-radius: 0;
   }
 
   /* ── FORM ELEMENTS ── */
   .field-label {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 10px;
+    font-size: 9px;
     letter-spacing: 1.8px;
     text-transform: uppercase;
     color: var(--gray-text);
-    margin-bottom: 5px;
+    margin-bottom: 4px;
   }
 
   .field-value-large {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 38px;
+    font-size: 32px;
     font-weight: 800;
     color: var(--red);
     letter-spacing: -1px;
@@ -197,32 +192,31 @@
 
   .stub-value {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 600;
     color: var(--black);
   }
 
   .stub-value.big {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 800;
     color: var(--red);
   }
 
-  .row { display: flex; gap: 12px; }
+  .row { display: flex; gap: 10px; }
   .col { flex: 1; min-width: 0; }
 
   .route-row {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 4px;
+    gap: 8px;
+    margin-bottom: 2px;
   }
 
   .route-arrow {
     flex: 1;
     display: flex;
     align-items: center;
-    position: relative;
   }
 
   .route-arrow svg { width: 100%; }
@@ -230,11 +224,11 @@
   select, input[type="number"], input[type="time"] {
     width: 100%;
     font-family: 'Barlow', sans-serif;
-    font-size: 13px;
-    padding: 8px 10px;
+    font-size: 12px;
+    padding: 6px 8px;
     border: 1px solid var(--gray-mid);
-    border-radius: 8px;
-    background: var(--input-bg);
+    border-radius: 7px;
+    background: #ffffff;
     color: var(--black);
     outline: none;
     transition: border-color 0.2s;
@@ -243,45 +237,44 @@
     cursor: pointer;
   }
 
-  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 24px;
+  }
 
   select:focus, input:focus { border-color: var(--red); }
 
   .divider {
     border: none;
     border-top: 1px dashed var(--accent);
-    opacity: 0.45;
-    margin: 4px 0;
+    opacity: 0.35;
+    margin: 2px 0;
   }
 
   /* ── BARCODE FOOTER ── */
   .ticket-footer {
     border-top: 1px dashed #ccc;
-    background: var(--footer-bg);
-    border-radius: 0 0 20px 20px;
-    padding: 12px 28px;
+    background: #f9f9f9;
+    border-radius: 0 0 16px 16px;
+    padding: 10px 22px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
+    gap: 12px;
   }
 
   .barcode {
     display: flex;
     gap: 0px;
     align-items: center;
-    height: 40px;
-  }
-
-  .barcode span {
-    display: inline-block;
-    background: #222;
-    border-radius: 1px;
+    height: 36px;
   }
 
   .footer-info {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
+    font-size: 10px;
     color: var(--gray-text);
     text-align: center;
     line-height: 1.8;
@@ -291,21 +284,19 @@
   /* ── PREDICT BUTTON ── */
   .predict-btn {
     width: 100%;
-    max-width: 680px;
-    margin-top: 20px;
-    padding: 15px;
+    padding: 12px;
     background: linear-gradient(135deg, var(--red) 0%, var(--accent) 100%);
     color: #fff;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 700;
     letter-spacing: 3px;
     text-transform: uppercase;
     border: none;
-    border-radius: 12px;
+    border-radius: 10px;
     cursor: pointer;
     transition: opacity 0.2s, transform 0.1s;
-    box-shadow: 0 4px 16px rgba(46,164,224,0.28);
+    box-shadow: 0 3px 12px rgba(46,164,224,0.28);
   }
 
   .predict-btn:hover { opacity: 0.9; }
@@ -316,17 +307,15 @@
   .result-card {
     display: none;
     width: 100%;
-    max-width: 680px;
-    margin-top: 16px;
-    background: var(--white);
-    border-radius: 20px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+    background: #ffffff !important;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
     overflow: hidden;
     animation: slideUp 0.4s ease;
   }
 
   @keyframes slideUp {
-    from { opacity: 0; transform: translateY(16px); }
+    from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
@@ -334,9 +323,9 @@
 
   .result-header {
     background: var(--red);
-    padding: 10px 24px;
+    padding: 8px 20px;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: 2.5px;
     text-transform: uppercase;
     color: rgba(255,255,255,0.9);
@@ -344,18 +333,19 @@
   }
 
   .result-body {
-    padding: 24px 28px;
+    padding: 16px 22px;
     display: flex;
     align-items: center;
-    gap: 22px;
+    gap: 18px;
+    background: #ffffff;
   }
 
   .status-ring {
-    width: 74px; height: 74px;
+    width: 62px; height: 62px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     flex-shrink: 0;
-    border-width: 2.5px;
+    border-width: 2px;
     border-style: solid;
   }
 
@@ -366,25 +356,25 @@
 
   .result-label {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 800;
     letter-spacing: 0.5px;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
   }
 
   .result-label.ok   { color: #2e7d32; }
   .result-label.late { color: #c62828; }
 
   .result-sub {
-    font-size: 13px;
+    font-size: 12px;
     color: #666;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .prob-bar-track {
     background: #ebebeb;
     border-radius: 100px;
-    height: 9px;
+    height: 8px;
     overflow: hidden;
   }
 
@@ -400,8 +390,8 @@
 
   .prob-pct {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 36px;
-    min-width: 80px;
+    font-size: 30px;
+    min-width: 70px;
     text-align: right;
     flex-shrink: 0;
   }
@@ -411,15 +401,15 @@
 
   .result-footer {
     border-top: 1px dashed #ccc;
-    background: var(--footer-bg);
-    padding: 10px 28px;
+    background: #f9f9f9;
+    padding: 8px 22px;
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
 
   .result-footer-label {
-    font-size: 10px;
+    font-size: 9px;
     letter-spacing: 1.5px;
     text-transform: uppercase;
     color: #bbb;
@@ -428,315 +418,224 @@
 
   .result-footer-detail {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
+    font-size: 10px;
     color: var(--gray-text);
   }
 
   .spinner {
     display: inline-block;
-    width: 18px; height: 18px;
+    width: 15px; height: 15px;
     border: 2px solid rgba(255,255,255,0.4);
     border-top-color: #fff;
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
     vertical-align: middle;
-    margin-right: 8px;
+    margin-right: 6px;
   }
 
   @keyframes spin { to { transform: rotate(360deg); } }
-
-
-  @media (max-width: 600px) {
-  body { padding: 16px 10px 40px; }
-
-  .ticket { border-radius: 14px; }
-
-  .ticket-header {
-    padding: 12px 16px;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .airline-name { font-size: 20px; }
-
-  .boarding-label { font-size: 11px; }
-  .boarding-label strong { font-size: 14px; }
-
-  /* Hide the stub on mobile — show info in footer instead */
-  .tear, .ticket-stub { display: none; }
-
-  .ticket-form { padding: 16px; gap: 12px; }
-
-  .field-value-large { font-size: 28px; }
-
-  .row { flex-direction: column; gap: 10px; }
-  .col { max-width: 100% !important; }
-
-  select, input[type="number"], input[type="time"] {
-    font-size: 16px; /* prevents iOS zoom on focus */
-    padding: 10px 12px;
-  }
-
-  select {
-    padding-right: 32px;
-    background-position: right 12px center;
-  }
-
-  .ticket-footer {
-    padding: 12px 16px;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .footer-info { text-align: center; font-size: 10px; }
-
-  .predict-btn {
-    font-size: 15px;
-    padding: 14px;
-    margin-top: 14px;
-  }
-
-  .result-body {
-    padding: 16px;
-    gap: 14px;
-    flex-wrap: wrap;
-  }
-
-  .prob-pct { font-size: 28px; min-width: 60px; }
-
-  .status-ring { width: 58px; height: 58px; }
-
-  .result-label { font-size: 20px; }
-
-  .result-footer { padding: 10px 16px; flex-direction: column; gap: 4px; }
-}
-
 </style>
 </head>
 <body>
 
-<!-- ════════════════════════════════════════ TICKET ══ -->
-<div class="ticket">
+<div class="wrapper">
 
-  <!-- Header -->
-  <div class="ticket-header">
-    <div class="airline-logo">
-      <div class="logo-circle">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="white">
-          <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
-        </svg>
-      </div>
-      <span class="airline-name">Kierncb Airlines</span>
-    </div>
-    <div class="boarding-label">
-      Flight Delay Predictor
-      <strong>BOARDING PASS</strong>
-    </div>
-  </div>
+  <!-- ════════════ TICKET ════════════ -->
+  <div class="ticket">
 
-  <!-- Body -->
-  <div class="ticket-body">
-
-    <!-- LEFT: Form -->
-    <div class="ticket-form">
-
-      <!-- Route display -->
-      <div class="route-row">
-        <div>
-          <div class="field-label">From</div>
-          <div class="field-value-large" id="disp-origin">—</div>
-        </div>
-        <div class="route-arrow">
-          <svg viewBox="0 0 120 24" height="24" xmlns="http://www.w3.org/2000/svg">
-            <line x1="0" y1="12" x2="105" y2="12" stroke="#ddd" stroke-width="1.5"/>
-            <polygon points="105,7 118,12 105,17" fill="#ddd"/>
-            <circle cx="59" cy="12" r="4.5" fill="#2ea4e0" opacity="0.65"/>
+    <!-- Header -->
+    <div class="ticket-header">
+      <div class="airline-logo">
+        <div class="logo-circle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+            <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
           </svg>
         </div>
-        <div style="text-align:right">
+        <span class="airline-name">Kierncb Airlines</span>
+      </div>
+      <div class="boarding-label">
+        Flight Delay Predictor
+        <strong>BOARDING PASS</strong>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="ticket-body">
+
+      <!-- LEFT: Form -->
+      <div class="ticket-form">
+
+        <!-- Route display -->
+        <div class="route-row">
+          <div>
+            <div class="field-label">From</div>
+            <div class="field-value-large" id="disp-origin">—</div>
+          </div>
+          <div class="route-arrow">
+            <svg viewBox="0 0 120 24" height="22" xmlns="http://www.w3.org/2000/svg">
+              <line x1="0" y1="12" x2="105" y2="12" stroke="#ddd" stroke-width="1.5"/>
+              <polygon points="105,7 118,12 105,17" fill="#ddd"/>
+              <circle cx="59" cy="12" r="4" fill="#2ea4e0" opacity="0.65"/>
+            </svg>
+          </div>
+          <div style="text-align:right">
+            <div class="field-label">To</div>
+            <div class="field-value-large" id="disp-dest">—</div>
+          </div>
+        </div>
+
+        <hr class="divider"/>
+
+        <!-- Origin / Dest -->
+        <div class="row">
+          <div class="col">
+            <div class="field-label">Origin Airport</div>
+            <select id="origin" onchange="onOriginChange()"></select>
+          </div>
+          <div class="col">
+            <div class="field-label">Destination</div>
+            <select id="dest" onchange="updateStub()"></select>
+          </div>
+        </div>
+
+        <!-- Carrier / Month -->
+        <div class="row">
+          <div class="col">
+            <div class="field-label">Carrier</div>
+            <select id="carrier" onchange="updateStub()"></select>
+          </div>
+          <div class="col">
+            <div class="field-label">Month</div>
+            <select id="month" onchange="updateStub()">
+              <option value="1">January</option><option value="2">February</option>
+              <option value="3">March</option><option value="4">April</option>
+              <option value="5">May</option><option value="6">June</option>
+              <option value="7" selected>July</option><option value="8">August</option>
+              <option value="9">September</option><option value="10">October</option>
+              <option value="11">November</option><option value="12">December</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Day / Sched / Actual -->
+        <div class="row">
+          <div class="col" style="max-width:90px">
+            <div class="field-label">Day</div>
+            <input type="number" id="day" min="1" max="31" value="15"/>
+          </div>
+          <div class="col">
+            <div class="field-label">Scheduled Dep.</div>
+            <input type="time" id="sched" value="17:00" onchange="updateStub()"/>
+          </div>
+          <div class="col">
+            <div class="field-label">Actual Dep.</div>
+            <input type="time" id="actual" value="17:00"/>
+          </div>
+        </div>
+
+      </div><!-- /ticket-form -->
+
+      <!-- TEAR LINE -->
+      <div class="tear">
+        <div class="tear-notch top"></div>
+        <div class="tear-notch bottom"></div>
+      </div>
+
+      <!-- RIGHT STUB -->
+      <div class="ticket-stub">
+        <div>
+          <div class="field-label">Passenger</div>
+          <div class="stub-value" style="font-size:12px;color:#555;">@kierncb</div>
+        </div>
+        <div>
+          <div class="field-label">From</div>
+          <div class="stub-value big" id="stub-origin">—</div>
+        </div>
+        <div>
           <div class="field-label">To</div>
-          <div class="field-value-large" id="disp-dest">—</div>
+          <div class="stub-value big" id="stub-dest">—</div>
+        </div>
+        <div>
+          <div class="field-label">Flight</div>
+          <div class="stub-value" id="stub-carrier">—</div>
+        </div>
+        <div>
+          <div class="field-label">Departs</div>
+          <div class="stub-value" id="stub-time">17:00</div>
         </div>
       </div>
 
-      <hr class="divider"/>
+    </div><!-- /ticket-body -->
 
-      <!-- Origin / Dest -->
-      <div class="row">
-        <div class="col">
-          <div class="field-label">Origin Airport</div>
-          <select id="origin" onchange="onOriginChange()"></select>
-        </div>
-        <div class="col">
-          <div class="field-label">Destination</div>
-          <select id="dest" onchange="updateStub()"></select>
-        </div>
-      </div>
-
-      <!-- Carrier / Month -->
-      <div class="row">
-        <div class="col">
-          <div class="field-label">Carrier</div>
-          <select id="carrier" onchange="updateStub()"></select>
-        </div>
-        <div class="col">
-          <div class="field-label">Month</div>
-          <select id="month" onchange="updateStub()">
-            <option value="1">January</option><option value="2">February</option>
-            <option value="3">March</option><option value="4">April</option>
-            <option value="5">May</option><option value="6">June</option>
-            <option value="7" selected>July</option><option value="8">August</option>
-            <option value="9">September</option><option value="10">October</option>
-            <option value="11">November</option><option value="12">December</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Day / Sched / Actual -->
-      <div class="row">
-        <div class="col" style="max-width:110px">
-          <div class="field-label">Day</div>
-          <input type="number" id="day" min="1" max="31" value="15"/>
-        </div>
-        <div class="col">
-          <div class="field-label">Scheduled Dep.</div>
-          <input type="time" id="sched" value="17:00" onchange="updateStub()"/>
-        </div>
-        <div class="col">
-          <div class="field-label">Actual Dep.</div>
-          <input type="time" id="actual" value="17:00"/>
-        </div>
-      </div>
-
-    </div><!-- /ticket-form -->
-
-    <!-- TEAR LINE -->
-    <div class="tear">
-      <div class="tear-notch top"></div>
-      <div class="tear-notch bottom"></div>
+    <!-- Barcode footer -->
+    <div class="ticket-footer">
+      <div class="barcode" id="barcode"></div>
+      <div class="footer-info" id="footer-info">— → — &nbsp;|&nbsp; — &nbsp;|&nbsp; 17:00</div>
     </div>
 
-    <!-- RIGHT STUB -->
-    <div class="ticket-stub">
-      <div>
-        <div class="field-label">Passenger</div>
-        <div class="stub-value" style="font-size:13px;color:#555;">@kierncb</div>
-      </div>
-      <div>
-        <div class="field-label">From</div>
-        <div class="stub-value big" id="stub-origin">—</div>
-      </div>
-      <div>
-        <div class="field-label">To</div>
-        <div class="stub-value big" id="stub-dest">—</div>
-      </div>
-      <div>
-        <div class="field-label">Flight</div>
-        <div class="stub-value" id="stub-carrier">—</div>
-      </div>
-      <div>
-        <div class="field-label">Departs</div>
-        <div class="stub-value" id="stub-time">17:00</div>
-      </div>
+  </div><!-- /ticket -->
 
+  <!-- PREDICT BUTTON -->
+  <button class="predict-btn" id="pred-btn" onclick="predict()">✈ &nbsp;Check Delay Risk</button>
+
+  <!-- RESULT CARD -->
+  <div class="result-card" id="result-card">
+    <div class="result-header">Prediction Result — Delay Analysis</div>
+    <div class="result-body">
+      <div class="status-ring" id="res-ring">
+        <svg width="30" height="30" viewBox="0 0 24 24" id="res-icon"></svg>
+      </div>
+      <div class="result-text">
+        <div class="result-label" id="res-label">—</div>
+        <div class="result-sub" id="res-sub">—</div>
+        <div class="prob-bar-track">
+          <div class="prob-bar-fill" id="res-bar"></div>
+        </div>
+      </div>
+      <div class="prob-pct" id="res-pct">—</div>
     </div>
-
-  </div><!-- /ticket-body -->
-
-  <!-- Barcode footer -->
-  <div class="ticket-footer">
-    <div class="barcode" id="barcode"></div>
-    <div class="footer-info" id="footer-info">— → — &nbsp;|&nbsp; — &nbsp;|&nbsp; 17:00</div>
+    <div class="result-footer">
+      <span class="result-footer-label">Delay Probability</span>
+      <span class="result-footer-detail" id="res-detail">—</span>
+    </div>
   </div>
 
-</div><!-- /ticket -->
-
-<!-- PREDICT BUTTON -->
-<button class="predict-btn" id="pred-btn" onclick="predict()">✈ &nbsp;Check Delay Risk</button>
-
-<!-- RESULT CARD -->
-<div class="result-card" id="result-card">
-  <div class="result-header">Prediction Result — Delay Analysis</div>
-  <div class="result-body">
-    <div class="status-ring" id="res-ring">
-      <svg width="34" height="34" viewBox="0 0 24 24" id="res-icon"></svg>
-    </div>
-    <div class="result-text">
-      <div class="result-label" id="res-label">—</div>
-      <div class="result-sub" id="res-sub">—</div>
-      <div class="prob-bar-track">
-        <div class="prob-bar-fill" id="res-bar"></div>
-      </div>
-    </div>
-    <div class="prob-pct" id="res-pct">—</div>
-  </div>
-  <div class="result-footer">
-    <span class="result-footer-label">Delay Probability</span>
-    <span class="result-footer-detail" id="res-detail">—</span>
-  </div>
-</div>
+</div><!-- /wrapper -->
 
 <script>
 const API = '/api';
 
-// ── Barcode generator (crisp SVG EAN-13 style) ────────────────────
 function drawBarcode() {
   const bc = document.getElementById('barcode');
   bc.innerHTML = '';
-
-  // EAN-13 encoding tables
   const L = ['0001101','0011001','0010011','0111101','0100011','0110001','0101111','0111011','0110111','0001011'];
   const G = ['0100111','0110011','0011011','0100001','0011101','0111001','0000101','0010001','0001001','0010111'];
   const R = ['1110010','1100110','1101100','1000010','1011100','1001110','1010000','1000100','1001000','1110100'];
   const firstDigitParity = ['LLLLLL','LLGLGG','LLGGLG','LLGGGL','LGLLGG','LGGLLG','LGGGLL','LGLGLG','LGLGGL','LGGLGL'];
-
   const digits = '5674577163452'.split('').map(Number);
   const parityPattern = firstDigitParity[digits[0]];
-
-  // Build full bit string
-  let bits = '101'; // start guard
+  let bits = '101';
   for (let i = 1; i <= 6; i++) {
     const table = parityPattern[i - 1] === 'L' ? L : G;
     bits += table[digits[i]];
   }
-  bits += '01010'; // middle guard
-  for (let i = 7; i <= 12; i++) {
-    bits += R[digits[i]];
-  }
-  bits += '101'; // end guard
-
-  const barW = 2;
-  const barH = 44;
-  const numH = 14;
-  const totalW = bits.length * barW;
-  const totalH = barH + numH;
-
+  bits += '01010';
+  for (let i = 7; i <= 12; i++) bits += R[digits[i]];
+  bits += '101';
+  const barW = 2, barH = 36, numH = 12;
+  const totalW = bits.length * barW, totalH = barH + numH;
   let svgBars = '';
   for (let i = 0; i < bits.length; i++) {
-    if (bits[i] === '1') {
-      svgBars += `<rect x="${i * barW}" y="0" width="${barW}" height="${barH}" fill="currentColor"/>`;
-    }
+    if (bits[i] === '1') svgBars += `<rect x="${i*barW}" y="0" width="${barW}" height="${barH}" fill="currentColor"/>`;
   }
-
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}">
-      <rect width="${totalW}" height="${totalH}" fill="var(--footer-bg)"/>
-      ${svgBars}
-      <text x="${totalW / 2}" y="${totalH - 1}" text-anchor="middle"
-        font-family="'Share Tech Mono', monospace" font-size="10" fill="currentColor">5674577163452</text>
-    </svg>`;
-
-  bc.innerHTML = svg;
+  bc.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="${totalW}" height="${totalH}" viewBox="0 0 ${totalW} ${totalH}"><rect width="${totalW}" height="${totalH}" fill="#f9f9f9"/>${svgBars}<text x="${totalW/2}" y="${totalH-1}" text-anchor="middle" font-family="'Share Tech Mono',monospace" font-size="9" fill="currentColor">5674577163452</text></svg>`;
 }
 
-// ── Populate dropdowns from API ────────────────────
 async function init() {
   drawBarcode();
   try {
     const r = await fetch(API + '/options');
     const d = await r.json();
-
     const originSel = document.getElementById('origin');
     d.origins.forEach(o => {
       const opt = document.createElement('option');
@@ -744,17 +643,14 @@ async function init() {
       if (o === 'JFK') opt.selected = true;
       originSel.appendChild(opt);
     });
-
     const carrierSel = document.getElementById('carrier');
     d.carriers.forEach(c => {
       const opt = document.createElement('option');
       opt.value = opt.textContent = c;
       carrierSel.appendChild(opt);
     });
-
     await onOriginChange();
   } catch (e) {
-    // Fallback demo data if API not running
     populateFallback();
   }
 }
@@ -762,7 +658,6 @@ async function init() {
 function populateFallback() {
   const airports = ['ATL','BOS','DEN','DFW','IAH','JFK','LAX','MIA','ORD','SEA','SFO'];
   const carriers = ['AA','AS','B6','DL','F9','NK','UA','WN'];
-
   const os = document.getElementById('origin');
   const cs = document.getElementById('carrier');
   airports.forEach(a => {
@@ -776,7 +671,6 @@ function populateFallback() {
     o.value = o.textContent = c;
     cs.appendChild(o);
   });
-
   const ds = document.getElementById('dest');
   airports.forEach(a => {
     const o = document.createElement('option');
@@ -784,7 +678,6 @@ function populateFallback() {
     if (a === 'LAX') o.selected = true;
     ds.appendChild(o);
   });
-
   updateStub();
 }
 
@@ -810,21 +703,19 @@ function updateStub() {
   const dest    = document.getElementById('dest').value    || '—';
   const carrier = document.getElementById('carrier').value || '—';
   const sched   = document.getElementById('sched').value   || '00:00';
-
-  document.getElementById('disp-origin').textContent   = origin;
-  document.getElementById('disp-dest').textContent     = dest;
-  document.getElementById('stub-origin').textContent   = origin;
-  document.getElementById('stub-dest').textContent     = dest;
-  document.getElementById('stub-carrier').textContent  = carrier;
-  document.getElementById('stub-time').textContent     = sched;
+  document.getElementById('disp-origin').textContent  = origin;
+  document.getElementById('disp-dest').textContent    = dest;
+  document.getElementById('stub-origin').textContent  = origin;
+  document.getElementById('stub-dest').textContent    = dest;
+  document.getElementById('stub-carrier').textContent = carrier;
+  document.getElementById('stub-time').textContent    = sched;
   const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const monthVal = parseInt(document.getElementById('month').value);
   const dayVal   = document.getElementById('day').value;
   const dateStr  = monthNames[monthVal - 1] + ' ' + dayVal;
-  document.getElementById('footer-info').textContent   = origin + ' → ' + dest + '   |   ' + carrier + '   |   ' + sched + '   |   ' + dateStr;
+  document.getElementById('footer-info').textContent = origin + ' → ' + dest + '   |   ' + carrier + '   |   ' + sched + '   |   ' + dateStr;
 }
 
-// ── Prediction ─────────────────────────────────────
 async function predict() {
   const btn = document.getElementById('pred-btn');
   btn.disabled = true;
@@ -843,16 +734,13 @@ async function predict() {
     const r = await fetch(API + '/predict', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        origin, dest, carrier, month, day,
+      body: JSON.stringify({ origin, dest, carrier, month, day,
         sched_hour: sched[0], sched_min: sched[1],
-        actual_hour: actual[0], actual_min: actual[1]
-      })
+        actual_hour: actual[0], actual_min: actual[1] })
     });
     const d = await r.json();
     prob = d.probability;
   } catch(e) {
-    // Heuristic fallback
     const depDelay = (actual[0]*60+actual[1]) - (sched[0]*60+sched[1]);
     prob = 0.18;
     if (depDelay > 30) prob += 0.35;
@@ -865,9 +753,7 @@ async function predict() {
     prob = Math.min(0.97, Math.max(0.03, prob));
   }
 
-  showResult(prob, origin, dest,
-    (actual[0]*60+actual[1]) - (sched[0]*60+sched[1]));
-
+  showResult(prob, origin, dest, (actual[0]*60+actual[1]) - (sched[0]*60+sched[1]));
   btn.disabled = false;
   btn.innerHTML = '✈ &nbsp;Check Delay Risk';
 }
@@ -908,13 +794,9 @@ function showResult(prob, origin, dest, depDelayMin) {
 
   const card = document.getElementById('result-card');
   card.classList.add('show');
-
-  // Animate bar after paint
   requestAnimationFrame(() => {
     requestAnimationFrame(() => { bar.style.width = pct + '%'; });
   });
-
-  card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 init();
