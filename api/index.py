@@ -6,12 +6,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import numpy as np
 
-# You can remove these if you are letting vercel.json handle the static index.html
-# from fastapi.responses import FileResponse 
-
 app = FastAPI()
 
-# 1. FIX CORS: Allow all for development/deployment
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -19,22 +15,39 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# 2. FIX PATHING: Get the absolute path to the model in the root directory
-# Since this file is in /api, we go one level up to find the .pkl
+# Path fix
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 model_path = os.path.join(BASE_DIR, "flight_model.pkl")
 
-# Load model once at startup
 with open(model_path, "rb") as f:
     data = pickle.load(f)
 
-model        = data["model"]
-le_carrier   = data["le_carrier"]
-le_origin    = data["le_origin"]
-le_dest      = data["le_dest"]
-dist_df      = data["distance_lookup"]
+# ✅ Logistic Regression params (NOT sklearn model anymore)
+coef = np.array(data["coef"])
+intercept = data["intercept"]
+
+# classes for encoding (if still needed)
+carrier_classes = data["carrier_classes"]
+origin_classes  = data["origin_classes"]
+dest_classes    = data["dest_classes"]
+
+dist_df = pd.DataFrame(data["distance_lookup"])
 feature_cols = data["feature_cols"]
 
+
+# ---------- helpers ----------
+def encode(value, classes):
+    try:
+        return classes.index(value)
+    except ValueError:
+        return -1
+
+
+def sigmoid(z):
+    return 1 / (1 + np.exp(-z))
+
+
+# ---------- schema ----------
 class FlightInput(BaseModel):
     origin: str
     dest: str
@@ -46,45 +59,53 @@ class FlightInput(BaseModel):
     actual_hour: int
     actual_min: int
 
-@app.get("/options") # Added /api prefix to match vercel.json logic
+
+# ---------- endpoints ----------
+@app.get("/options")
 def get_options():
     return {
-        "carriers": sorted(le_carrier.classes_.tolist()),
-        "origins":  sorted(le_origin.classes_.tolist()),
-        "dests":    sorted(le_dest.classes_.tolist()),
+        "carriers": sorted(carrier_classes),
+        "origins": sorted(origin_classes),
+        "dests": sorted(dest_classes),
     }
+
 
 @app.get("/dests")
 def get_dests(origin: str):
     available = dist_df[dist_df["origin"] == origin]["dest"].unique().tolist()
     if not available:
-        available = le_dest.classes_.tolist()
+        available = dest_classes
     return {"dests": sorted(available)}
+
 
 @app.post("/predict")
 def predict(inp: FlightInput):
+
     dep_delay = (inp.actual_hour * 60 + inp.actual_min) - (inp.sched_hour * 60 + inp.sched_min)
     hour = inp.sched_hour
 
     route = dist_df[(dist_df["origin"] == inp.origin) & (dist_df["dest"] == inp.dest)]
     distance = float(route["distance"].iloc[0]) if not route.empty else float(dist_df["distance"].mean())
 
-    c_enc = le_carrier.transform([inp.carrier])[0]
-    o_enc = le_origin.transform([inp.origin])[0]
-    d_enc = le_dest.transform([inp.dest])[0]
+    # encoding (manual safe encoding)
+    c_enc = encode(inp.carrier, carrier_classes)
+    o_enc = encode(inp.origin, origin_classes)
+    d_enc = encode(inp.dest, dest_classes)
 
-    X = pd.DataFrame([[inp.month, inp.day, hour, dep_delay, distance, c_enc, o_enc, d_enc]],
-                      columns=feature_cols)
-    
-   # Replace model.predict_proba with:
-def lr_predict(coef, intercept, x):
+    x = np.array([inp.month, inp.day, hour, dep_delay, distance, c_enc, o_enc, d_enc])
+
+    # logistic regression inference
     logit = np.dot(coef, x) + intercept
-    return 1 / (1 + np.exp(-logit))  # sigmoid
+    prob = sigmoid(logit)
 
-# NOTE: We removed the @app.get("/") route because your vercel.json 
-# handles serving /public/index.html automatically.
+    label = "DELAYED" if prob > 0.5 else "ON-TIME"
+
+    return {
+        "prediction": label,
+        "probability": float(prob)
+    }
+
 
 if __name__ == "__main__":
     import uvicorn
-    # "api.index" matches your folder 'api' and file 'index.py'
     uvicorn.run("api.index:app", host="127.0.0.1", port=8000, reload=True)
